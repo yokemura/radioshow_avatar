@@ -1,13 +1,15 @@
-import 'dart:math' as math;
+import 'dart:async';
+import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flame/palette.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:mic_stream/mic_stream.dart';
 
 /// This example simply adds a rotating white square on the screen.
 /// If you press on a square, it will be removed.
@@ -17,10 +19,15 @@ void main() async {
   // Must add this line.
   await windowManager.ensureInitialized();
 
+  const windowSize = Size(640, 360);
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(640, 360),
+    size: windowSize,
+    minimumSize: windowSize,
+    maximumSize: windowSize,
     backgroundColor: Colors.white,
     skipTaskbar: true,
+    titleBarStyle: TitleBarStyle.hidden,
+    windowButtonVisibility: false,
   );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
@@ -34,14 +41,49 @@ void main() async {
   );
 }
 
+enum CharStatus {
+  still,
+  talking,
+}
+
 class MyWorld extends World with TapCallbacks {
   late final SpriteAnimation stillAnimation;
   late final SpriteAnimation talkAnimation;
   late final SpriteAnimation overAnimation;
   late final SpriteAnimationComponent avatar;
 
+  late final StreamSubscription<List<int>> audioListener;
+
+  CharStatus charStatus = CharStatus.still;
+
+  double sum = 0;
+  int count = 0;
+  static const int countMax = 30;
+  static const double threshold = 10000;
+
   @override
   Future<void> onLoad() async {
+    // Init a new Stream
+    Stream<Uint8List> stream = MicStream.microphone(
+      sampleRate: 48000,
+      audioFormat: AudioFormat.ENCODING_PCM_16BIT,
+      channelConfig: ChannelConfig.CHANNEL_IN_MONO,
+    );
+
+// Start listening to the stream
+    // Transform the stream and print each sample individually
+    stream.transform(MicStream.toSampleStream).listen(_onListen);
+//    audioListener = stream.listen((samples) => print(samples));
+
+    final bgImage = await Flame.images.load('mainBG-v2.png');
+    final bgSprite = Sprite(bgImage);
+    add(SpriteComponent(
+      sprite: bgSprite,
+      size: Vector2(640, 360),
+      position: Vector2.zero(),
+      anchor: Anchor.center,
+    ));
+
     _makeSprite(Vector2(0, 80));
 //    add(Square(Vector2.zero()));
   }
@@ -106,5 +148,34 @@ class MyWorld extends World with TapCallbacks {
     );
 
     add(avatar);
+  }
+
+  void _onListen(dynamic values) {
+    final converted = values as (int, int);
+    final toAdd = (converted.$1 * converted.$1).toDouble();
+    sum = sum + toAdd;
+    count++;
+    if (count >= countMax) {
+      final average = sqrt(sum / countMax.toDouble());
+      _onAverageYielded(average);
+      print(average);
+      count = 0;
+      sum = 0;
+    }
+  }
+
+  void _onAverageYielded(double average) {
+    switch (charStatus) {
+      case CharStatus.still:
+        if (average > threshold) {
+          avatar.animation = talkAnimation;
+          charStatus = CharStatus.talking;
+        }
+      case CharStatus.talking:
+        if (average < threshold) {
+          avatar.animation = stillAnimation;
+          charStatus = CharStatus.still;
+        }
+    }
   }
 }
