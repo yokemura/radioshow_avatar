@@ -84,7 +84,7 @@ class MyWorld extends World with TapCallbacks {
       anchor: Anchor.center,
     ));
 
-    _makeSprite(Vector2(0, 80));
+    _makeSprite(Vector2(0, 112));
 //    add(Square(Vector2.zero()));
   }
 
@@ -143,7 +143,7 @@ class MyWorld extends World with TapCallbacks {
     avatar = SpriteAnimationComponent(
       animation: stillAnimation,
       position: position,
-      size: Vector2(24, 40) * 8,
+      size: Vector2(24, 40) * 7.5,
       anchor: Anchor.center,
     );
 
