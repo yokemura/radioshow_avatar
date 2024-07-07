@@ -50,7 +50,12 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    return true;
+    if (keysPressed.contains(LogicalKeyboardKey.keyZ)) {
+      avatar.changeAnimation(AvatarStatus.talking);
+    } else {
+      avatar.changeAnimation(AvatarStatus.still);
+    }
+    return false;
   }
 
   void _onListen(dynamic values) {
