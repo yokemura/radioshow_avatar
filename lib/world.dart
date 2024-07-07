@@ -12,11 +12,16 @@ import 'avatar.dart';
 class MyWorld extends World with TapCallbacks, KeyboardHandler {
   late final StreamSubscription<List<int>> audioListener;
 
+  // マイク検知関係
   double sum = 0;
   int count = 0;
   static const int countMax = 300;
   static const double threshold = 10000;
 
+  // キー関係
+  var isPressingKeys = false;
+
+  // キャラ
   late final Avatar avatar;
 
   @override
@@ -50,6 +55,8 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    isPressingKeys = keysPressed.isNotEmpty;
+
     if (keysPressed.contains(LogicalKeyboardKey.keyZ)) {
       avatar.changeAnimation(AvatarStatus.talking);
     } else {
@@ -73,6 +80,9 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
   }
 
   void _onAverageYielded(double average) {
+    if (isPressingKeys) {
+      return; // キー押下中はマイクは無視
+    }
     if (average > threshold) {
       avatar.changeAnimation(AvatarStatus.talking);
     } else {
