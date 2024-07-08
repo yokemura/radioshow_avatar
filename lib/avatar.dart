@@ -57,7 +57,7 @@ class Avatar extends SpriteAnimationComponent {
         spriteSheet.createFrameDataFromId(5, stepTime: 0.06),
         spriteSheet.createFrameDataFromId(6, stepTime: 0.06),
         spriteSheet.createFrameDataFromId(5, stepTime: 0.06),
-        spriteSheet.createFrameDataFromId(0, stepTime: 0.06),
+        spriteSheet.createFrameDataFromId(4, stepTime: 0.06),
       ]),
     );
 
