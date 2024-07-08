@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:mic_stream/mic_stream.dart';
 
 import 'avatar.dart';
+import 'flower.dart';
 
 class MyWorld extends World with TapCallbacks, KeyboardHandler {
   late final StreamSubscription<List<int>> audioListener;
@@ -23,6 +24,7 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
 
   // キャラ
   late final Avatar avatar;
+  late final Flower flower;
 
   @override
   Future<void> onLoad() async {
@@ -51,6 +53,9 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     //
     avatar = await Avatar.create(Vector2(0, 112));
     add(avatar);
+
+    flower = await Flower.create();
+    add(flower);
   }
 
   @override
