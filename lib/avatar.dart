@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
+import 'package:radioshow_avatar/const.dart';
 
 enum AvatarStatus {
   still,
@@ -18,6 +19,7 @@ class Avatar extends SpriteAnimationComponent {
     super.animation = stillAnimation;
     super.size = Vector2(24, 40) * 7.5;
     super.anchor = Anchor.center;
+    super.priority = ZPosition.avatar;
   }
 
   final SpriteAnimation stillAnimation;

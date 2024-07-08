@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:mic_stream/mic_stream.dart';
 
 import 'avatar.dart';
+import 'const.dart';
 import 'flower.dart';
 
 class MyWorld extends World with TapCallbacks, KeyboardHandler {
@@ -46,6 +47,7 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
       size: Vector2(640, 360),
       position: Vector2.zero(),
       anchor: Anchor.center,
+      priority: ZPosition.bg,
     ));
 
     //
@@ -55,7 +57,6 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     add(avatar);
 
     flower = await Flower.create();
-    add(flower);
   }
 
   @override
@@ -69,7 +70,17 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     } else {
       avatar.changeAnimation(AvatarStatus.still);
     }
-    return false;
+
+    if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
+      if (!contains(flower)) {
+        add(flower);
+      }
+    } else {
+      if (contains(flower)) {
+        remove(flower);
+      }
+    }
+      return false;
   }
 
   void _onListen(dynamic values) {
