@@ -20,8 +20,9 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
   static const int countMax = 300;
   static const double threshold = 10000;
 
-  // キー関係
+  // 動作モード
   var isPressingKeys = false;
+  var isListeningMode = false; // 曲聴き中
 
   // キャラ
   late final Avatar avatar;
@@ -63,12 +64,21 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     isPressingKeys = keysPressed.isNotEmpty;
 
+    if (event is KeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.keyP) {
+        isListeningMode = !isListeningMode;
+      }
+    }
+
+    final defaultStatus =
+        isListeningMode ? AvatarStatus.listening : AvatarStatus.still;
+
     if (keysPressed.contains(LogicalKeyboardKey.keyX)) {
       avatar.changeAnimation(AvatarStatus.over);
     } else if (keysPressed.contains(LogicalKeyboardKey.keyZ)) {
       avatar.changeAnimation(AvatarStatus.talking);
     } else {
-      avatar.changeAnimation(AvatarStatus.still);
+      avatar.changeAnimation(defaultStatus);
     }
 
     if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
@@ -80,7 +90,7 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
         remove(flower);
       }
     }
-      return false;
+    return false;
   }
 
   void _onListen(dynamic values) {
@@ -98,8 +108,8 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
   }
 
   void _onAverageYielded(double average) {
-    if (isPressingKeys) {
-      return; // キー押下中はマイクは無視
+    if (isPressingKeys || isListeningMode) {
+      return; // キー押下中・曲聴き中はマイクは無視
     }
     if (average > threshold) {
       avatar.changeAnimation(AvatarStatus.talking);
