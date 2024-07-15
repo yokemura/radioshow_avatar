@@ -1,5 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
+import 'package:flame/game.dart';
+import 'package:flame/rendering.dart';
 import 'package:flame/sprite.dart';
 import 'package:radioshow_avatar/const.dart';
 
@@ -7,6 +9,7 @@ enum AvatarStatus {
   still,
   talking,
   over,
+  listening,
 }
 
 class Avatar extends SpriteAnimationComponent {
@@ -27,6 +30,10 @@ class Avatar extends SpriteAnimationComponent {
   final SpriteAnimation overAnimation;
 
   AvatarStatus status = AvatarStatus.still;
+  double listeningMovementCount = 0;
+
+  static const double listeningMovementCycle = 0.15;
+  late Transform2DDecorator transDeco;
 
   static Future<Avatar> create(Vector2 position) async {
     final image = await Flame.images.load('spritesheet_yoke.png');
@@ -84,6 +91,41 @@ class Avatar extends SpriteAnimationComponent {
         animation = talkAnimation;
       case AvatarStatus.over:
         animation = overAnimation;
+      case AvatarStatus.listening:
+        animation = stillAnimation;
     }
+  }
+
+  @override
+  void onMount() {
+    super.onMount();
+
+    final trans = Transform2D()..position = Vector2.zero();
+    transDeco = Transform2DDecorator(trans);
+
+    decorator.addLast(transDeco);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    var amount = Vector2.zero();
+
+    switch (status) {
+      case AvatarStatus.listening:
+        listeningMovementCount += dt;
+        if (listeningMovementCount < listeningMovementCycle) {
+          amount = Vector2(0, -7);
+        } else if (listeningMovementCount < listeningMovementCycle * 2) {
+          amount = Vector2.zero();
+        } else {
+          listeningMovementCount = 0;
+          amount = Vector2(0, -7);
+        }
+      default:
+        amount = Vector2.zero();
+    }
+    transDeco.transform2d.position = amount;
   }
 }
