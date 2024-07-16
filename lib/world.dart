@@ -6,6 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/services.dart';
 import 'package:mic_stream/mic_stream.dart';
+import 'package:radioshow_avatar/play_button.dart';
 
 import 'avatar.dart';
 import 'const.dart';
@@ -27,6 +28,7 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
   // キャラ
   late final Avatar avatar;
   late final Flower flower;
+  late final PlayButton playButton;
 
   @override
   Future<void> onLoad() async {
@@ -58,6 +60,7 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     add(avatar);
 
     flower = await Flower.create();
+    playButton = await PlayButton.create();
   }
 
   @override
@@ -67,6 +70,11 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.keyP) {
         isListeningMode = !isListeningMode;
+        if (isListeningMode) {
+          add(playButton);
+        } else {
+          remove(playButton);
+        }
       }
     }
 
