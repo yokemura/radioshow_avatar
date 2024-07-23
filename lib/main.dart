@@ -18,7 +18,7 @@ void main() async {
     minimumSize: windowSize,
     maximumSize: windowSize,
     backgroundColor: Colors.white,
-    skipTaskbar: true,
+    skipTaskbar: false,
     titleBarStyle: TitleBarStyle.hidden,
     windowButtonVisibility: false,
   );
