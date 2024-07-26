@@ -9,6 +9,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  audio_monitor:
+    dependency: "direct main"
+    description:
+      path: "packages/audio_monitor"
+      relative: true
+    source: path
+    version: "0.0.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -310,5 +317,5 @@ packages:
     source: hosted
     version: "0.3.9"
 sdks:
-  dart: ">=3.2.3 <4.0.0"
+  dart: ">=3.3.1 <4.0.0"
   flutter: ">=3.19.0"

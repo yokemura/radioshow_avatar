@@ -16,6 +16,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   window_manager: ^0.3.9
   mic_stream: ^0.7.1+2
+  audio_monitor:
+    path: packages/audio_monitor
 
 dev_dependencies:
   flutter_test:

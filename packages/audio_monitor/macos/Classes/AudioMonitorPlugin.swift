@@ -3,6 +3,30 @@ import FlutterMacOS
 import CoreAudio
 import AudioToolbox
 
+
+func audioQueueInputCallback(
+    inUserData: UnsafeMutableRawPointer?,
+    inAQ: AudioQueueRef,
+    inBuffer: AudioQueueBufferRef,
+    inStartTime: UnsafePointer<AudioTimeStamp>,
+    inNumberPacketDescriptions: UInt32,
+    inPacketDescs: UnsafePointer<AudioStreamPacketDescription>?
+) {
+    let audioData = inBuffer.pointee.mAudioData.assumingMemoryBound(to: Int16.self)
+    let audioDataCount = Int(inBuffer.pointee.mAudioDataByteSize) / MemoryLayout<Int16>.size
+    
+    var sum: Int64 = 0
+    for i in 0..<audioDataCount {
+        sum += Int64(audioData[i]) * Int64(audioData[i])
+    }
+    let rms = sqrt(Double(sum) / Double(audioDataCount))
+    let dB = 20.0 * log10(rms)
+
+    print("Audio level: \(dB) dB")
+
+    AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, nil)
+}
+
 public class AudioMonitorPlugin: NSObject, FlutterPlugin {
     var audioQueue: AudioQueueRef?
     var audioQueueBuffer = [AudioQueueBufferRef?](repeating: nil, count: 3)
@@ -16,7 +40,7 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "audio_monitor", binaryMessenger: registrar.messenger)
-        let instance = AudioMonitorPlugin()
+        let instance = AudioMonitorPlugin(registrar)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
@@ -101,28 +125,6 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
       return devices
     }
 
-    func audioQueueInputCallback(
-        inUserData: UnsafeMutableRawPointer?,
-        inAQ: AudioQueueRef,
-        inBuffer: AudioQueueBufferRef,
-        inStartTime: UnsafePointer<AudioTimeStamp>,
-        inNumberPacketDescriptions: UInt32,
-        inPacketDescs: UnsafePointer<AudioStreamPacketDescription>?
-    ) {
-        let audioData = inBuffer.pointee.mAudioData.assumingMemoryBound(to: Int16.self)
-        let audioDataCount = Int(inBuffer.pointee.mAudioDataByteSize) / MemoryLayout<Int16>.size
-        
-        var sum: Int64 = 0
-        for i in 0..<audioDataCount {
-            sum += Int64(audioData[i]) * Int64(audioData[i])
-        }
-        let rms = sqrt(Double(sum) / Double(audioDataCount))
-        let dB = 20.0 * log10(rms)
-
-        print("Audio level: \(dB) dB")
-
-        AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, nil)
-    }
 
     func startMonitoring() {
         var audioFormat = AudioStreamBasicDescription(

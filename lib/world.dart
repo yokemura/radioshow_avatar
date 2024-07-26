@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:audio_monitor/audio_monitor.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
@@ -61,6 +62,9 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
 
     flower = await Flower.create();
     playButton = await PlayButton.create();
+
+    final devices = await AudioMonitor.getAudioDevices();
+    print(devices);
   }
 
   @override
