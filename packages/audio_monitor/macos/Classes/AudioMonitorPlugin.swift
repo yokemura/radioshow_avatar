@@ -3,6 +3,7 @@ import FlutterMacOS
 import CoreAudio
 import AudioToolbox
 
+var globalEventSink: FlutterEventSink?
 
 func audioQueueInputCallback(
     inUserData: UnsafeMutableRawPointer?,
@@ -23,7 +24,8 @@ func audioQueueInputCallback(
     let dB = 20.0 * log10(rms)
 
     print("Audio level: \(dB) dB")
-
+    globalEventSink?(dB)
+    
     AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, nil)
 }
 
@@ -42,27 +44,33 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
         let channel = FlutterMethodChannel(name: "audio_monitor", binaryMessenger: registrar.messenger)
         let instance = AudioMonitorPlugin(registrar)
         registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        let eventChannel = FlutterEventChannel(name: "audio_monitor_level", binaryMessenger: registrar.messenger)
+        eventChannel.setStreamHandler(instance)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        switch call.method {
-        case "getPlatformVersion":
-            result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
-        case "getAudioDevices":
-            result(getAudioDevices())
-        case "startMonitoring":
-            startMonitoring()
-            result("Monitoring started")
-        case "stopMonitoring":
-            stopMonitoring()
-            result("Monitoring stopped")
-        default:
-            result(FlutterMethodNotImplemented)
-        }
+      switch call.method {
+      case "getAudioDevices":
+          result(getAudioDevices())
+      case "startMonitoring":
+          if let args = call.arguments as? [String: Any],
+             let deviceId = args["deviceId"] as? Int {
+              startMonitoring(deviceId: AudioDeviceID(deviceId))
+              result("Monitoring started for device \(deviceId)")
+          } else {
+              result(FlutterError(code: "INVALID_ARGUMENT", message: "Device ID not provided", details: nil))
+          }
+      case "stopMonitoring":
+          stopMonitoring()
+          result("Monitoring stopped")
+      default:
+          result(FlutterMethodNotImplemented)
+      }
     }
     
-    func getAudioDevices() -> [String] {
-      var devices: [String] = []
+    func getAudioDevices() -> [[String: Any]] {
+      var devices: [[String: Any]] = []
 
       var propertySize = UInt32(MemoryLayout<AudioDeviceID>.size)
       var audioDevicesCount: UInt32 = 0
@@ -118,7 +126,10 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
               &deviceName
           )
           if status == noErr {
-              devices.append(deviceName as String)
+              devices.append([
+                  "id": Int(deviceID),
+                  "name": deviceName as String
+              ])
           }
       }
 
@@ -126,7 +137,7 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
     }
 
 
-    func startMonitoring() {
+    func startMonitoring(deviceId: AudioDeviceID) {
         var audioFormat = AudioStreamBasicDescription(
             mSampleRate: sampleRate,
             mFormatID: kAudioFormatLinearPCM,
@@ -141,13 +152,28 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
 
         let bufferByteSize = UInt32(sampleRate * bufferDurationSeconds * Double(audioFormat.mBytesPerFrame))
 
+        // Create a device property address to set the device
+        var propertyAddress = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyDefaultInputDevice,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMaster
+        )
+
+        // Set the device
+        var deviceID = deviceId
+        let propertySize = UInt32(MemoryLayout<AudioDeviceID>.size)
+        AudioObjectSetPropertyData(AudioObjectID(kAudioObjectSystemObject), &propertyAddress, 0, nil, propertySize, &deviceID)
+
+        // Create audio queue
         AudioQueueNewInput(&audioFormat, audioQueueInputCallback, nil, nil, nil, 0, &audioQueue)
 
+        // Allocate buffers
         for i in 0..<audioQueueBuffer.count {
             AudioQueueAllocateBuffer(audioQueue!, bufferByteSize, &audioQueueBuffer[i])
             AudioQueueEnqueueBuffer(audioQueue!, audioQueueBuffer[i]!, 0, nil)
         }
 
+        // Start the queue
         AudioQueueStart(audioQueue!, nil)
     }
 
@@ -157,4 +183,17 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
             AudioQueueDispose(audioQueue, true)
         }
     }
+}
+
+// FlutterStreamHandlerプロトコルの実装
+extension AudioMonitorPlugin: FlutterStreamHandler {
+  public func onListen(withArguments arguments: Any?, eventSink: @escaping FlutterEventSink) -> FlutterError? {
+      globalEventSink = eventSink
+      return nil
+  }
+
+  public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+      globalEventSink = nil
+      return nil
+  }
 }

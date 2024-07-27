@@ -21,6 +21,7 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
   int count = 0;
   static const int countMax = 300;
   static const double threshold = 10000;
+  StreamSubscription<double>? _audioLevelSubscription;
 
   // 動作モード
   var isPressingKeys = false;
@@ -64,7 +65,13 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     playButton = await PlayButton.create();
 
     final devices = await AudioMonitor.getAudioDevices();
-    print(devices);
+
+    _audioLevelSubscription = AudioMonitor.audioLevelStream.listen((event) {
+      print(event);
+    });
+
+    final device = devices.firstWhere((element) => element.name.contains('AG'));
+    AudioMonitor.startMonitoring(device.id);
   }
 
   @override
