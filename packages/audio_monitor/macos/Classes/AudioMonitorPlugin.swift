@@ -40,6 +40,7 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
         super.init()
     }
     
+    // Register Flutter Method Channel and Event Channel
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "audio_monitor", binaryMessenger: registrar.messenger)
         let instance = AudioMonitorPlugin(registrar)
@@ -49,6 +50,7 @@ public class AudioMonitorPlugin: NSObject, FlutterPlugin {
         eventChannel.setStreamHandler(instance)
     }
     
+    // Handle Method call
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
       switch call.method {
       case "getAudioDevices":
