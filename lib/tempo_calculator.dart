@@ -1,48 +1,51 @@
+import 'package:flutter/foundation.dart';
+
 class TempoCalculator {
   static const int _maxTap = 10;
   static const double _minBpm = 60;
   static const double _maxBpm = 200;
-  static const double _maxBpmDiff = 15;
   static const int _minNumTaps = 3;
 
   Duration currentDuration = _minBpm.toDuration;
-  final List<DateTime> _taps = [];
+
+  @visibleForTesting
+  final List<DateTime> taps = [];
 
   // 履歴を追加してタイマーの間隔を返す。
   Duration addTap(DateTime newTime) {
-    if (_taps.length >= _minNumTaps) {
-      // 十分な履歴数あり
-      final averageDuration = _taps.averageDuration;
-      // 前回との差分計算（＆単独bpm換算）
-      final diff = newTime.difference(_taps.last).inBpm;
-      final diffFromAve = (averageDuration.inBpm - diff).abs();
+    // 履歴更新
+    _addAndRetireTap(newTime);
 
-      if (diff < _minBpm || diff > _maxBpm || diffFromAve > _maxBpmDiff) {
+    if (taps.length >= _minNumTaps) {
+      // 十分な履歴数あり
+      // 前回との差分計算（＆単独bpm換算）
+      final lastLast = taps[taps.length - 2];
+      final diff = newTime.difference(lastLast).inBpm;
+
+      if (diff < _minBpm || diff > _maxBpm) {
         // 範囲外
         // 履歴クリア
-        _taps.clear();
+        taps.clear();
+        taps.add(newTime);
         // 既存bpmでタイマー再セットさせる
         return currentDuration;
       } else {
         // 範囲内
-        // 履歴更新
-        _addAndRetireTap(newTime);
         // 新しい履歴からbpm換算、タイマー再セットさせる
-        return _taps.averageDuration;
+        currentDuration = taps.averageDuration;
+        return currentDuration;
       }
     } else {
       // 十分な履歴数なし
-      // 履歴追加
-      _addAndRetireTap(newTime);
       // 既存bpmでタイマー再セット
       return currentDuration;
     }
   }
 
   void _addAndRetireTap(DateTime newDate) {
-    _taps.add(newDate);
-    if (_taps.length > _maxTap) {
-      _taps.removeAt(0);
+    taps.add(newDate);
+    if (taps.length > _maxTap) {
+      taps.removeAt(0);
     }
   }
 }
