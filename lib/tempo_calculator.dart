@@ -10,24 +10,28 @@ class TempoCalculator {
 
   // 履歴を追加してタイマーの間隔を返す。
   Duration addTap(DateTime newTime) {
-    if (_taps.length >= _minNumTaps) { // 十分な履歴数あり
+    if (_taps.length >= _minNumTaps) {
+      // 十分な履歴数あり
       final averageDuration = _taps.averageDuration;
       // 前回との差分計算（＆単独bpm換算）
       final diff = newTime.difference(_taps.last).inBpm;
       final diffFromAve = (averageDuration.inBpm - diff).abs();
 
-      if (diff < _minBpm || diff > _maxBpm || diffFromAve > _maxBpmDiff) { // 範囲外
+      if (diff < _minBpm || diff > _maxBpm || diffFromAve > _maxBpmDiff) {
+        // 範囲外
         // 履歴クリア
         _taps.clear();
         // 既存bpmでタイマー再セットさせる
         return currentDuration;
-      } else { // 範囲内
+      } else {
+        // 範囲内
         // 履歴更新
         _addAndRetireTap(newTime);
         // 新しい履歴からbpm換算、タイマー再セットさせる
         return _taps.averageDuration;
       }
-    } else { // 十分な履歴数なし
+    } else {
+      // 十分な履歴数なし
       // 履歴追加
       _addAndRetireTap(newTime);
       // 既存bpmでタイマー再セット
@@ -62,7 +66,7 @@ extension AvarageDuration on List<DateTime> {
     }
     int totalMicros = 0;
     for (int i = 0; i < length - 1; i++) {
-      totalMicros += this[i+1].difference(this[i]).inMicroseconds;
+      totalMicros += this[i + 1].difference(this[i]).inMicroseconds;
     }
     final average = totalMicros ~/ (length - 1);
     return Duration(microseconds: average);
