@@ -50,12 +50,12 @@ void main() {
     time = time.add(const Duration(seconds: 2)); // 間が空いた
     res = calculator.addTap(time);
     expect(calculator.taps.length, 1); // 履歴クリア
-    expect(res, const Duration(milliseconds: 500)); // Durationは維持される
+    expect(res, const Duration(seconds: 1)); // Durationもリセット
 
     time = time.add(const Duration(milliseconds: 750)); // 新しいテンポ
     res = calculator.addTap(time);
     expect(calculator.taps.length, 2);
-    expect(res, const Duration(milliseconds: 500)); // まだDurationは維持
+    expect(res, const Duration(seconds: 1)); // 維持
 
     time = time.add(const Duration(milliseconds: 750)); // 新しいテンポ・3発目
     res = calculator.addTap(time);

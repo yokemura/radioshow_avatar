@@ -27,7 +27,7 @@ class TempoCalculator {
         // 履歴クリア
         taps.clear();
         taps.add(newTime);
-        // 既存bpmでタイマー再セットさせる
+        currentDuration = _minBpm.toDuration;
         return currentDuration;
       } else {
         // 範囲内
