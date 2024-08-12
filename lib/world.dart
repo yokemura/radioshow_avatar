@@ -79,13 +79,18 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     isPressingKeys = keysPressed.isNotEmpty;
 
     if (event is KeyDownEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.keyP) {
-        isListeningMode = !isListeningMode;
-        if (isListeningMode) {
-          add(playButton);
-        } else {
-          remove(playButton);
-        }
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.keyP:
+          isListeningMode = true;
+          avatar.tapTempo();
+          if (!contains(playButton)) {
+            add(playButton);
+          }
+        case LogicalKeyboardKey.keyO:
+          isListeningMode = false;
+          if (contains(playButton)) {
+            remove(playButton);
+          }
       }
     }
 

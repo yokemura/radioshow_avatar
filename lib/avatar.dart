@@ -4,6 +4,7 @@ import 'package:flame/game.dart';
 import 'package:flame/rendering.dart';
 import 'package:flame/sprite.dart';
 import 'package:radioshow_avatar/const.dart';
+import 'package:radioshow_avatar/tempo_calculator.dart';
 
 enum AvatarStatus {
   still,
@@ -32,8 +33,12 @@ class Avatar extends SpriteAnimationComponent {
   AvatarStatus status = AvatarStatus.still;
   double listeningMovementCount = 0;
 
-  static const double listeningMovementCycle = 0.15;
   late Transform2DDecorator transDeco;
+  DateTime tickEndTime = DateTime.fromMicrosecondsSinceEpoch(0);
+  DateTime nextCycleStartTime = DateTime.fromMicrosecondsSinceEpoch(0);
+  Duration listeningMovementCycle = Duration.zero;
+  static const Duration tickDuration = Duration(milliseconds: 100);
+  final calculator = TempoCalculator();
 
   static Future<Avatar> create(Vector2 position) async {
     final image = await Flame.images.load('spritesheet_yoke.png');
@@ -96,6 +101,15 @@ class Avatar extends SpriteAnimationComponent {
     }
   }
 
+  void tapTempo() {
+    final now = DateTime.now();
+    tickEndTime = now.add(tickDuration);
+
+    final newDur = calculator.addTap(now);
+    nextCycleStartTime = now.add(newDur);
+    listeningMovementCycle = newDur;
+  }
+
   @override
   void onMount() {
     super.onMount();
@@ -114,13 +128,14 @@ class Avatar extends SpriteAnimationComponent {
 
     switch (status) {
       case AvatarStatus.listening:
-        listeningMovementCount += dt;
-        if (listeningMovementCount < listeningMovementCycle) {
+        final now = DateTime.now();
+        if (now.isBefore(tickEndTime)) {
           amount = Vector2(0, -7);
-        } else if (listeningMovementCount < listeningMovementCycle * 2) {
+        } else if (now.isBefore(nextCycleStartTime)) {
           amount = Vector2.zero();
         } else {
-          listeningMovementCount = 0;
+          tickEndTime = nextCycleStartTime.add(tickDuration);
+          nextCycleStartTime = nextCycleStartTime.add(listeningMovementCycle);
           amount = Vector2(0, -7);
         }
       default:
