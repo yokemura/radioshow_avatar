@@ -28,8 +28,15 @@ void main() async {
   });
 
   runApp(
-    GameWidget(
-      game: MyGame(),
+    MaterialApp(
+      home: Stack(
+        children: [
+          GameWidget(
+            game: MyGame(),
+          ),
+          const Text('Hello, world!'),
+        ],
+      ),
     ),
   );
 }

@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 
-import 'const.dart';
+import '../const.dart';
 
 class PlayButton extends SpriteComponent {
   PlayButton(Sprite sprite) {

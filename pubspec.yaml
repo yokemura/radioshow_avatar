@@ -18,6 +18,7 @@ dependencies:
   mic_stream: ^0.7.1+2
   audio_monitor:
     path: packages/audio_monitor
+  riverpod: ^2.5.1
 
 dev_dependencies:
   flutter_test:

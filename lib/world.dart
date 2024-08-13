@@ -7,11 +7,11 @@ import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/services.dart';
 import 'package:mic_stream/mic_stream.dart';
-import 'package:radioshow_avatar/play_button.dart';
 
-import 'avatar.dart';
+import 'flame_components/play_button.dart';
+import 'flame_components/avatar.dart';
 import 'const.dart';
-import 'flower.dart';
+import 'flame_components/flower.dart';
 
 class MyWorld extends World with TapCallbacks, KeyboardHandler {
   late final StreamSubscription<List<int>> audioListener;

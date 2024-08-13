@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:radioshow_avatar/tempo_calculator.dart';
+import 'package:radioshow_avatar/model/tempo_calculator.dart';
 
 void main() {
   test('duration conversion', () {

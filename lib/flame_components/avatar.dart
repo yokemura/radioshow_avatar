@@ -4,7 +4,7 @@ import 'package:flame/game.dart';
 import 'package:flame/rendering.dart';
 import 'package:flame/sprite.dart';
 import 'package:radioshow_avatar/const.dart';
-import 'package:radioshow_avatar/tempo_calculator.dart';
+import 'package:radioshow_avatar/model/tempo_calculator.dart';
 
 enum AvatarStatus {
   still,
