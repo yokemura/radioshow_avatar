@@ -56,7 +56,7 @@ class AudioDeviceLevelSettingViewModel
   }
 
   void onFinishMeasuring() {
-    final levels = state.recordedLevels;
+    List<double> levels = state.recordedLevels.map((e) => e).toList();
     levels.removeOutliers(); // mutate list
 
     switch (state.process) {
@@ -83,20 +83,13 @@ class AudioDeviceLevelSettingViewModel
     if (finishTime == null) {
       return; // Recording is not happening
     }
-    AudioLevelSettingProcess process = state.process;
-    if (time.isAfter(finishTime)) {
-      process = switch (process) {
-        AudioLevelSettingProcess.measuringLowerLevel =>
-          AudioLevelSettingProcess.waitingForUpperLevel,
-        AudioLevelSettingProcess.measuringUpperLevel =>
-          AudioLevelSettingProcess.finished,
-        _ => process,
-      };
-    }
 
     state = state.copyWith(
-      process: process,
       recordedLevels: state.recordedLevels + [value],
     );
+
+    if (time.isAfter(finishTime)) {
+      onFinishMeasuring();
+    }
   }
 }
