@@ -19,6 +19,8 @@ dependencies:
   audio_monitor:
     path: packages/audio_monitor
   riverpod: ^2.5.1
+  hooks_riverpod: ^2.5.1
+  flutter_hooks: ^0.20.5
   freezed:
   sample_statistics: ^0.2.0
 

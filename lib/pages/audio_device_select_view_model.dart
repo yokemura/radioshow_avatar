@@ -3,8 +3,11 @@ import 'package:radioshow_avatar/pages/audio_device_select_page_state.dart';
 import 'package:riverpod/riverpod.dart';
 
 final audioDeviceSelectViewModelProvider = StateNotifierProvider.autoDispose<
-        AudioDeviceSelectViewModel, AudioDeviceSelectViewState>(
-    (ref) => AudioDeviceSelectViewModel(AudioDeviceSelectViewStateInitial()));
+    AudioDeviceSelectViewModel, AudioDeviceSelectViewState>(
+  (ref) => AudioDeviceSelectViewModel(
+    const AudioDeviceSelectViewState(devices: []),
+  ),
+);
 
 class AudioDeviceSelectViewModel
     extends StateNotifier<AudioDeviceSelectViewState> {
@@ -12,13 +15,16 @@ class AudioDeviceSelectViewModel
 
   void getDevices() async {
     final devices = await AudioMonitor.getAudioDevices();
-    state = AudioDeviceSelectViewStateListLoaded(
+    state = AudioDeviceSelectViewState(
       devices: devices,
     );
   }
 
   void onDeviceSelected(InputDevice device) {
     AudioMonitor.startMonitoring(device.id);
-    state = AudioDeviceSelectViewStateSelected(device: device);
+    state = AudioDeviceSelectViewState(
+      devices: state.devices,
+      isSelected: true,
+    );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:radioshow_avatar/pages/audio_device_select_page.dart';
 import 'package:radioshow_avatar/world.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -28,14 +30,16 @@ void main() async {
   });
 
   runApp(
-    MaterialApp(
-      home: Stack(
-        children: [
-          GameWidget(
+    ProviderScope(
+      child: MaterialApp(
+        home: const AudioDeviceSelectPage(),
+        routes: <String, WidgetBuilder> {
+          'deviceSelect': (BuildContext context) => const AudioDeviceSelectPage(),
+          'audioLevelSetting': (BuildContext context) => const Text('level setting'),
+          'main': (BuildContext context) => GameWidget(
             game: MyGame(),
           ),
-          const Text('Hello, world!'),
-        ],
+        },
       ),
     ),
   );
