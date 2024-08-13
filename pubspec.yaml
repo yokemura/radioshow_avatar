@@ -19,11 +19,14 @@ dependencies:
   audio_monitor:
     path: packages/audio_monitor
   riverpod: ^2.5.1
+  freezed:
+  sample_statistics: ^0.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  build_runner:
 
 flutter:
   assets:
