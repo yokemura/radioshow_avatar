@@ -1,12 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:radioshow_avatar/pages/audio_device_level_setting_view_model.dart';
+import 'package:radioshow_avatar/pages/audio_level_setting_view_model.dart';
 import 'package:radioshow_avatar/pages/audio_level_setting_view_state.dart';
 
 void main() {
   test('', () {
-    final viewModel = AudioDeviceLevelSettingViewModel(
+    final viewModel = AudioLevelSettingViewModel(
       AudioLevelSettingViewState(
           process: AudioLevelSettingProcess.waitingForLowerLevel),
     );

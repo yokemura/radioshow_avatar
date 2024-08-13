@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:radioshow_avatar/pages/audio_device_select_page.dart';
+import 'package:radioshow_avatar/pages/audio_level_setting_page.dart';
 import 'package:radioshow_avatar/world.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -35,7 +36,7 @@ void main() async {
         home: const AudioDeviceSelectPage(),
         routes: <String, WidgetBuilder> {
           'deviceSelect': (BuildContext context) => const AudioDeviceSelectPage(),
-          'audioLevelSetting': (BuildContext context) => const Text('level setting'),
+          'audioLevelSetting': (BuildContext context) => const AudioLevelSettingPage(),
           'main': (BuildContext context) => GameWidget(
             game: MyGame(),
           ),

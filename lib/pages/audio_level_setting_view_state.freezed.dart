@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AudioLevelSettingViewState {
   AudioLevelSettingProcess get process => throw _privateConstructorUsedError;
   List<double> get recordedLevels => throw _privateConstructorUsedError;
+  double get currentLevel => throw _privateConstructorUsedError;
   DateTime? get recordingFinishTime => throw _privateConstructorUsedError;
   double? get lowerLevel => throw _privateConstructorUsedError;
   double? get upperLevel => throw _privateConstructorUsedError;
@@ -37,6 +38,7 @@ abstract class $AudioLevelSettingViewStateCopyWith<$Res> {
   $Res call(
       {AudioLevelSettingProcess process,
       List<double> recordedLevels,
+      double currentLevel,
       DateTime? recordingFinishTime,
       double? lowerLevel,
       double? upperLevel});
@@ -58,6 +60,7 @@ class _$AudioLevelSettingViewStateCopyWithImpl<$Res,
   $Res call({
     Object? process = null,
     Object? recordedLevels = null,
+    Object? currentLevel = null,
     Object? recordingFinishTime = freezed,
     Object? lowerLevel = freezed,
     Object? upperLevel = freezed,
@@ -71,6 +74,10 @@ class _$AudioLevelSettingViewStateCopyWithImpl<$Res,
           ? _value.recordedLevels
           : recordedLevels // ignore: cast_nullable_to_non_nullable
               as List<double>,
+      currentLevel: null == currentLevel
+          ? _value.currentLevel
+          : currentLevel // ignore: cast_nullable_to_non_nullable
+              as double,
       recordingFinishTime: freezed == recordingFinishTime
           ? _value.recordingFinishTime
           : recordingFinishTime // ignore: cast_nullable_to_non_nullable
@@ -99,6 +106,7 @@ abstract class _$$AudioLevelSettingViewStateImplCopyWith<$Res>
   $Res call(
       {AudioLevelSettingProcess process,
       List<double> recordedLevels,
+      double currentLevel,
       DateTime? recordingFinishTime,
       double? lowerLevel,
       double? upperLevel});
@@ -119,6 +127,7 @@ class __$$AudioLevelSettingViewStateImplCopyWithImpl<$Res>
   $Res call({
     Object? process = null,
     Object? recordedLevels = null,
+    Object? currentLevel = null,
     Object? recordingFinishTime = freezed,
     Object? lowerLevel = freezed,
     Object? upperLevel = freezed,
@@ -132,6 +141,10 @@ class __$$AudioLevelSettingViewStateImplCopyWithImpl<$Res>
           ? _value._recordedLevels
           : recordedLevels // ignore: cast_nullable_to_non_nullable
               as List<double>,
+      currentLevel: null == currentLevel
+          ? _value.currentLevel
+          : currentLevel // ignore: cast_nullable_to_non_nullable
+              as double,
       recordingFinishTime: freezed == recordingFinishTime
           ? _value.recordingFinishTime
           : recordingFinishTime // ignore: cast_nullable_to_non_nullable
@@ -154,6 +167,7 @@ class _$AudioLevelSettingViewStateImpl implements _AudioLevelSettingViewState {
   _$AudioLevelSettingViewStateImpl(
       {required this.process,
       final List<double> recordedLevels = const [],
+      this.currentLevel = 0,
       this.recordingFinishTime,
       this.lowerLevel,
       this.upperLevel})
@@ -171,6 +185,9 @@ class _$AudioLevelSettingViewStateImpl implements _AudioLevelSettingViewState {
   }
 
   @override
+  @JsonKey()
+  final double currentLevel;
+  @override
   final DateTime? recordingFinishTime;
   @override
   final double? lowerLevel;
@@ -179,7 +196,7 @@ class _$AudioLevelSettingViewStateImpl implements _AudioLevelSettingViewState {
 
   @override
   String toString() {
-    return 'AudioLevelSettingViewState(process: $process, recordedLevels: $recordedLevels, recordingFinishTime: $recordingFinishTime, lowerLevel: $lowerLevel, upperLevel: $upperLevel)';
+    return 'AudioLevelSettingViewState(process: $process, recordedLevels: $recordedLevels, currentLevel: $currentLevel, recordingFinishTime: $recordingFinishTime, lowerLevel: $lowerLevel, upperLevel: $upperLevel)';
   }
 
   @override
@@ -190,6 +207,8 @@ class _$AudioLevelSettingViewStateImpl implements _AudioLevelSettingViewState {
             (identical(other.process, process) || other.process == process) &&
             const DeepCollectionEquality()
                 .equals(other._recordedLevels, _recordedLevels) &&
+            (identical(other.currentLevel, currentLevel) ||
+                other.currentLevel == currentLevel) &&
             (identical(other.recordingFinishTime, recordingFinishTime) ||
                 other.recordingFinishTime == recordingFinishTime) &&
             (identical(other.lowerLevel, lowerLevel) ||
@@ -203,6 +222,7 @@ class _$AudioLevelSettingViewStateImpl implements _AudioLevelSettingViewState {
       runtimeType,
       process,
       const DeepCollectionEquality().hash(_recordedLevels),
+      currentLevel,
       recordingFinishTime,
       lowerLevel,
       upperLevel);
@@ -220,6 +240,7 @@ abstract class _AudioLevelSettingViewState
   factory _AudioLevelSettingViewState(
       {required final AudioLevelSettingProcess process,
       final List<double> recordedLevels,
+      final double currentLevel,
       final DateTime? recordingFinishTime,
       final double? lowerLevel,
       final double? upperLevel}) = _$AudioLevelSettingViewStateImpl;
@@ -228,6 +249,8 @@ abstract class _AudioLevelSettingViewState
   AudioLevelSettingProcess get process;
   @override
   List<double> get recordedLevels;
+  @override
+  double get currentLevel;
   @override
   DateTime? get recordingFinishTime;
   @override

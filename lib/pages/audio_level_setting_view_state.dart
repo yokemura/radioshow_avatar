@@ -15,6 +15,7 @@ class AudioLevelSettingViewState with _$AudioLevelSettingViewState {
   factory AudioLevelSettingViewState({
     required AudioLevelSettingProcess process,
     @Default([]) List<double> recordedLevels,
+    @Default(0) double currentLevel,
     DateTime? recordingFinishTime,
     double? lowerLevel,
     double? upperLevel,

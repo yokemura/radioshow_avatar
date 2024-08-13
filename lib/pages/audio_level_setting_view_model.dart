@@ -4,9 +4,9 @@ import 'package:radioshow_avatar/pages/audio_level_setting_view_state.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:sample_statistics/sample_statistics.dart';
 
-final audioDeviceLevelSettingViewModelProvider = StateNotifierProvider
-    .autoDispose<AudioDeviceLevelSettingViewModel, AudioLevelSettingViewState>(
-  (ref) => AudioDeviceLevelSettingViewModel(
+final audioLevelSettingViewModelProvider = StateNotifierProvider
+    .autoDispose<AudioLevelSettingViewModel, AudioLevelSettingViewState>(
+  (ref) => AudioLevelSettingViewModel(
     AudioLevelSettingViewState(
       process: AudioLevelSettingProcess.measuringLowerLevel,
     ),
@@ -15,9 +15,9 @@ final audioDeviceLevelSettingViewModelProvider = StateNotifierProvider
 
 const _measuringDuration = Duration(seconds: 8);
 
-class AudioDeviceLevelSettingViewModel
+class AudioLevelSettingViewModel
     extends StateNotifier<AudioLevelSettingViewState> {
-  AudioDeviceLevelSettingViewModel(super.state);
+  AudioLevelSettingViewModel(super.state);
 
   void onStartMeasuringLower(DateTime startTime) {
     state = state.copyWith(
@@ -79,6 +79,10 @@ class AudioDeviceLevelSettingViewModel
     required DateTime time,
     required double value,
   }) {
+    state = state.copyWith(
+      currentLevel: value,
+    );
+
     final finishTime = state.recordingFinishTime;
     if (finishTime == null) {
       return; // Recording is not happening
