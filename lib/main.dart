@@ -48,4 +48,9 @@ void main() async {
 
 class MyGame extends FlameGame with HasKeyboardHandlerComponents {
   MyGame() : super(world: MyWorld());
+
+  @override
+  Color backgroundColor() {
+    return const Color(0xFF00FF00);
+  }
 }

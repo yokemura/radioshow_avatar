@@ -31,6 +31,7 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
   late final Avatar avatar;
   late final Flower flower;
   late final PlayButton playButton;
+  late final SpriteComponent bgSpriteComponent;
 
   @override
   Future<void> onLoad() async {
@@ -47,13 +48,14 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
 
     final bgImage = await Flame.images.load('mainBG-v2.png');
     final bgSprite = Sprite(bgImage);
-    add(SpriteComponent(
+    bgSpriteComponent = SpriteComponent(
       sprite: bgSprite,
       size: Vector2(640, 360),
       position: Vector2.zero(),
       anchor: Anchor.center,
       priority: ZPosition.bg,
-    ));
+    );
+    add(bgSpriteComponent);
 
     //
     // Make avatar
@@ -90,6 +92,12 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
           isListeningMode = false;
           if (contains(playButton)) {
             remove(playButton);
+          }
+        case LogicalKeyboardKey.keyT:
+          if (contains(bgSpriteComponent)) {
+            remove(bgSpriteComponent);
+          } else {
+            add(bgSpriteComponent);
           }
       }
     }
