@@ -8,7 +8,7 @@ final audioLevelSettingViewModelProvider = StateNotifierProvider
     .autoDispose<AudioLevelSettingViewModel, AudioLevelSettingViewState>(
   (ref) => AudioLevelSettingViewModel(
     AudioLevelSettingViewState(
-      process: AudioLevelSettingProcess.measuringLowerLevel,
+      process: AudioLevelSettingProcess.standby,
     ),
   ),
 );
@@ -34,12 +34,12 @@ class AudioLevelSettingViewModel
     switch (state.process) {
       case AudioLevelSettingProcess.measuringLowerLevel:
         state = state.copyWith(
-          process: AudioLevelSettingProcess.waitingForUpperLevel,
+          process: AudioLevelSettingProcess.standby,
           lowerLevel: levels.reduce(max),
         );
       case AudioLevelSettingProcess.measuringUpperLevel:
         state = state.copyWith(
-          process: AudioLevelSettingProcess.finished,
+          process: AudioLevelSettingProcess.standby,
           upperLevel: levels.reduce(min),
         );
       default:
@@ -62,12 +62,12 @@ class AudioLevelSettingViewModel
     switch (state.process) {
       case AudioLevelSettingProcess.measuringLowerLevel:
         state = state.copyWith(
-          process: AudioLevelSettingProcess.waitingForUpperLevel,
+          process: AudioLevelSettingProcess.standby,
           lowerLevel: levels.reduce(max),
         );
       case AudioLevelSettingProcess.measuringUpperLevel:
         state = state.copyWith(
-          process: AudioLevelSettingProcess.finished,
+          process: AudioLevelSettingProcess.standby,
           upperLevel: levels.reduce(min),
         );
       default:

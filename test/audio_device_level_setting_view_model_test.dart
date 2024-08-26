@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:radioshow_avatar/pages/audio_level_setting_view_model.dart';
 import 'package:radioshow_avatar/pages/audio_level_setting_view_state.dart';
@@ -8,7 +6,7 @@ void main() {
   test('', () {
     final viewModel = AudioLevelSettingViewModel(
       AudioLevelSettingViewState(
-          process: AudioLevelSettingProcess.waitingForLowerLevel),
+          process: AudioLevelSettingProcess.standby),
     );
 
     final date1 = DateTime(2024, 12, 31, 23, 59, 0);
@@ -59,7 +57,7 @@ void main() {
     now = date1.add(const Duration(seconds: 9));
     viewModel.onReceiveValue(time: now, value: 2);
     expect(
-        viewModel.state.process, AudioLevelSettingProcess.waitingForUpperLevel);
+        viewModel.state.process, AudioLevelSettingProcess.standby);
     expect(viewModel.state.lowerLevel, 2); // maximum value excluding outliers
 
     // Start measuring upper
@@ -104,7 +102,7 @@ void main() {
     now = date1.add(const Duration(seconds: 9));
     viewModel.onReceiveValue(time: now, value: 21);
     expect(
-        viewModel.state.process, AudioLevelSettingProcess.finished);
+        viewModel.state.process, AudioLevelSettingProcess.standby);
     expect(viewModel.state.lowerLevel, 2);
     expect(viewModel.state.upperLevel, 20); // minimum value excluding outliers
   });

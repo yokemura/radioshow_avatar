@@ -3,11 +3,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'audio_level_setting_view_state.freezed.dart';
 
 enum AudioLevelSettingProcess {
-  waitingForLowerLevel,
+  standby,
   measuringLowerLevel,
-  waitingForUpperLevel,
   measuringUpperLevel,
-  finished,
 }
 
 @freezed
@@ -20,4 +18,8 @@ class AudioLevelSettingViewState with _$AudioLevelSettingViewState {
     double? lowerLevel,
     double? upperLevel,
   }) = _AudioLevelSettingViewState;
+}
+
+extension IsReady on AudioLevelSettingViewState {
+  bool get isReady => lowerLevel != null && upperLevel != null;
 }
