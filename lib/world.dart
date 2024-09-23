@@ -42,6 +42,10 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
       channelConfig: ChannelConfig.CHANNEL_IN_MONO,
     );
 
+    AudioMonitor.audioLevelStream.listen((event) {
+
+    });
+
     // Start listening to the stream
     // Transform the stream and print each sample individually
     stream.transform(MicStream.toSampleStream).listen(_onListen);

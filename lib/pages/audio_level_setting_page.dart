@@ -14,7 +14,7 @@ class AudioLevelSettingPage extends HookConsumerWidget {
     final viewModel = ref.watch(audioLevelSettingViewModelProvider.notifier);
     final state = ref.watch(audioLevelSettingViewModelProvider);
 
-    final audioSubscription = useOnStreamChange(
+    final _ = useOnStreamChange(
       AudioMonitor.audioLevelStream,
       onData: (value) {
         viewModel.onReceiveValue(time: DateTime.now(), value: value);

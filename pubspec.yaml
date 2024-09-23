@@ -23,6 +23,7 @@ dependencies:
   flutter_hooks: ^0.20.5
   freezed:
   sample_statistics: ^0.2.0
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:

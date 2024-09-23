@@ -37,9 +37,12 @@ void main() async {
         routes: <String, WidgetBuilder> {
           'deviceSelect': (BuildContext context) => const AudioDeviceSelectPage(),
           'audioLevelSetting': (BuildContext context) => const AudioLevelSettingPage(),
-          'main': (BuildContext context) => GameWidget(
+          'main': (BuildContext context) {
+
+            return GameWidget(
             game: MyGame(),
-          ),
+          );
+          },
         },
       ),
     ),
