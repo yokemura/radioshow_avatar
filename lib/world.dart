@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:audio_monitor/audio_monitor.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/services.dart';
-import 'package:mic_stream/mic_stream.dart';
+import 'package:radioshow_avatar/model/shared_preference_manager.dart';
 
 import 'flame_components/play_button.dart';
 import 'flame_components/avatar.dart';
@@ -16,11 +15,6 @@ import 'flame_components/flower.dart';
 class MyWorld extends World with TapCallbacks, KeyboardHandler {
   late final StreamSubscription<List<int>> audioListener;
 
-  // マイク検知関係
-  double sum = 0;
-  int count = 0;
-  static const int countMax = 300;
-  static const double threshold = 10000;
   StreamSubscription<double>? _audioLevelSubscription;
 
   // 動作モード
@@ -33,23 +27,13 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
   late final PlayButton playButton;
   late final SpriteComponent bgSpriteComponent;
 
+  late final double _audioThreshold;
+
   @override
   Future<void> onLoad() async {
-    // Init a new Stream
-    Stream<Uint8List> stream = MicStream.microphone(
-      sampleRate: 48000,
-      audioFormat: AudioFormat.ENCODING_PCM_16BIT,
-      channelConfig: ChannelConfig.CHANNEL_IN_MONO,
-    );
-
-    AudioMonitor.audioLevelStream.listen((event) {
-
-    });
-
-    // Start listening to the stream
-    // Transform the stream and print each sample individually
-    stream.transform(MicStream.toSampleStream).listen(_onListen);
-
+    //
+    // Make background image
+    //
     final bgImage = await Flame.images.load('mainBG-v2.png');
     final bgSprite = Sprite(bgImage);
     bgSpriteComponent = SpriteComponent(
@@ -70,14 +54,20 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     flower = await Flower.create();
     playButton = await PlayButton.create();
 
-    final devices = await AudioMonitor.getAudioDevices();
+    //
+    // init audio listener
+    //
+    final levels = await SharedPreferenceManager().getAudioLevels();
+    _audioThreshold = (levels!.$1 + levels.$2) / 2;
 
-    _audioLevelSubscription = AudioMonitor.audioLevelStream.listen((event) {
-      print(event);
-    });
+    _audioLevelSubscription =
+        AudioMonitor.audioLevelStream.listen(_onListenAudio);
+  }
 
-    final device = devices.firstWhere((element) => element.name.contains('AG'));
-    AudioMonitor.startMonitoring(device.id);
+  @override
+  void onRemove() {
+    _audioLevelSubscription?.cancel();
+    super.onRemove();
   }
 
   @override
@@ -129,25 +119,11 @@ class MyWorld extends World with TapCallbacks, KeyboardHandler {
     return false;
   }
 
-  void _onListen(dynamic values) {
-    final converted = values as (int, int);
-    final toAdd = (converted.$1 * converted.$1).toDouble();
-    sum = sum + toAdd;
-    count++;
-    if (count >= countMax) {
-      final average = sqrt(sum / countMax.toDouble());
-      _onAverageYielded(average);
-      // print(average);
-      count = 0;
-      sum = 0;
-    }
-  }
-
-  void _onAverageYielded(double average) {
+  void _onListenAudio(double level) {
     if (isPressingKeys || isListeningMode) {
       return; // キー押下中・曲聴き中はマイクは無視
     }
-    if (average > threshold) {
+    if (level > _audioThreshold) {
       avatar.changeAnimation(AvatarStatus.talking);
     } else {
       avatar.changeAnimation(AvatarStatus.still);

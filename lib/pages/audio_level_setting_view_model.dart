@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:radioshow_avatar/model/shared_preference_manager.dart';
 import 'package:radioshow_avatar/pages/audio_level_setting_view_state.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:sample_statistics/sample_statistics.dart';
@@ -72,6 +73,15 @@ class AudioLevelSettingViewModel
         );
       default:
         break;
+    }
+    _storeLevelsIfNeeded();
+  }
+
+  void _storeLevelsIfNeeded() {
+    final upper = state.upperLevel;
+    final lower = state.lowerLevel;
+    if (upper != null && lower != null) {
+      SharedPreferenceManager.storeAudioLevels(lower: lower, upper: upper);
     }
   }
 
