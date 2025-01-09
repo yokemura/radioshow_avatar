@@ -24,8 +24,10 @@ func audioQueueInputCallback(
     let dB = 20.0 * log10(rms)
 
     print("Audio level: \(dB) dB")
-    globalEventSink?(dB)
-    
+    DispatchQueue.main.async {
+        globalEventSink?(dB)
+    }
+
     AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, nil)
 }
 

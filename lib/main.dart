@@ -34,6 +34,7 @@ void main() async {
     ProviderScope(
       child: MaterialApp(
         home: const AudioDeviceSelectPage(),
+        debugShowCheckedModeBanner: false,
         routes: <String, WidgetBuilder> {
           'deviceSelect': (BuildContext context) => const AudioDeviceSelectPage(),
           'audioLevelSetting': (BuildContext context) => const AudioLevelSettingPage(),

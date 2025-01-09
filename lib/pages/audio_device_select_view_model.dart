@@ -1,4 +1,5 @@
 import 'package:audio_monitor/audio_monitor.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:radioshow_avatar/pages/audio_device_select_page_state.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -14,6 +15,8 @@ class AudioDeviceSelectViewModel
   AudioDeviceSelectViewModel(super.state);
 
   void getDevices() async {
+    await Permission.audio.request();
+
     final devices = await AudioMonitor.getAudioDevices();
     state = AudioDeviceSelectViewState(
       devices: devices,

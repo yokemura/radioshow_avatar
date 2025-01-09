@@ -15,7 +15,6 @@ dependencies:
   flame: ^1.17.0
   cupertino_icons: ^1.0.2
   window_manager: ^0.3.9
-  mic_stream: ^0.7.1+2
   audio_monitor:
     path: packages/audio_monitor
   riverpod: ^2.5.1
@@ -24,6 +23,11 @@ dependencies:
   freezed:
   sample_statistics: ^0.2.0
   shared_preferences:
+  permission_handler:
+    git:
+      url: https://github.com/bvoq/flutter-permission-handler.git
+      path: permission_handler
+      ref: master
 
 dev_dependencies:
   flutter_test:
